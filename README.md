@@ -20,7 +20,7 @@ This project optimizes for clear architecture, sensible data handling, an explai
 - **Nitro backend-for-frontend** (`/server`) — the browser only talks to our own API, never TMDb directly. See [nitro.build](https://nitro.build/docs).
 - **Collaborative filtering** over the supplied user data (no external ratings needed) — see `PRD.md` for the approach.
 - **TMDb** for posters, backdrops, logos, and metadata, resolved **once at build time** and baked into the app — so the running server makes zero TMDb calls and needs no API key. See [TMDb API docs](https://developer.themoviedb.org/reference/getting-started).
-- **Modern, framework-free CSS** — native nesting, custom properties, `color-mix()`, `clamp()` and cascade layers. No Tailwind, no BEM.
+- **Modern, framework-free CSS** — native nesting, custom properties, `color-mix()`, `clamp()` and cascade layers.
 - **Shared TypeScript types** in `shared/types/`, consumed by both client and server.
 - **Cloudflare Workers** deployment via the Nitro `cloudflare_module` preset + wrangler.
 
