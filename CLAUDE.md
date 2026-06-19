@@ -24,8 +24,6 @@ pnpm deploy            # build + deploy to Cloudflare Workers (needs `wrangler l
 pnpm generate:catalog  # re-bake the TMDb-enriched catalog (needs TMDB_API_KEY)
 ```
 
-ESLint is configured (`@nuxt/eslint`, `eslint.config.mjs`); run with `pnpm exec eslint .`. There is no test tooling yet — if you add tests, prefer **Vitest** (Nuxt's default) and wire a `test` script. The pure `recommender.ts` engine is the natural first unit-test target.
-
 ## The dataset (read this before touching recommendations)
 
 `app/assets/movies.json` is the single source of truth. Its shape is **not** a flat array:
