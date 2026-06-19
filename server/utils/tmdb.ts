@@ -1,4 +1,4 @@
-import type { EnrichedMovie } from "../../shared/types";
+import type { EnrichedMovie } from "#shared/types";
 import enrichedCatalog from "./enriched-catalog.json";
 
 /**
