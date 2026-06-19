@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A movie recommendation web app built for a senior frontend technical interview (TrueFire Studios). Given the movies a user says they like, it recommends other movies from a fixed catalog of 70 — "users who liked A, B, C also liked…", the Amazon item-to-item idea. The emphasis is on a **visually impressive** UI and clean architecture, not ML novelty.
+A movie recommendation web app. Given the movies a user says they like, it recommends other movies from a fixed catalog of 70 — "users who liked A, B, C also liked…", the Amazon item-to-item idea. The emphasis is on a **visually impressive** UI and clean architecture.
 
 See `PRD.md` for the product spec and `TASKS.md` for the phased build plan. Keep both in sync with the code as it evolves.
 
