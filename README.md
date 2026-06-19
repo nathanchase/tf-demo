@@ -17,9 +17,9 @@ A small but polished movie recommendation app: pick the movies you love, get bac
 This project optimizes for clear architecture, sensible data handling, an explainable algorithm, and a modern, hand-crafted UI.
 
 - **Nuxt 5 + Vue 3** for the application layer.
-- **Nitro backend-for-frontend** (`/server`) — the browser only talks to our own API, never TMDb directly. See [nitro.build](https://nitro.build/docs).
+- **Nitro backend-for-frontend** (`/server`) — the browser only talks to our own API. See [nitro.build](https://nitro.build/docs).
 - **Collaborative filtering** over the supplied user data (no external ratings needed) — see `PRD.md` for the approach.
-- **TMDb** for posters, backdrops, logos, and metadata, resolved **once at build time** and baked into the app — so the running server makes zero TMDb calls and needs no API key. See [TMDb API docs](https://developer.themoviedb.org/reference/getting-started).
+- **TMDb** for posters, backdrops, logos, and metadata, resolved **once at build time** and baked into the app so the running server makes zero TMDb calls and needs no API key. See [TMDb API docs](https://developer.themoviedb.org/reference/getting-started).
 - **Modern, framework-free CSS** — native nesting, custom properties, `color-mix()`, `clamp()` and cascade layers.
 - **Shared TypeScript types** in `shared/types/`, consumed by both client and server.
 - **Cloudflare Workers** deployment via the Nitro `cloudflare_module` preset + wrangler.
@@ -60,8 +60,6 @@ Deployed to **Cloudflare Workers** (`cloudflare_module` Nitro preset, `wrangler.
 pnpm deploy
 ```
 
-No runtime secrets are required — the artwork is baked in at build time.
-
 ## Project docs
 
 - **[PRD.md](./PRD.md)** — product requirements and the recommendation design.
@@ -70,5 +68,4 @@ No runtime secrets are required — the artwork is baked in at build time.
 
 ## The data
 
-`app/assets/movies.json` holds the catalog (`movies`: id → `"Title (Year)"`) and ~806 users (`users`: each with the list of movie IDs they liked). 
-Feedback is binary and implicit.
+`app/assets/movies.json` holds the catalog (`movies`: id → `"Title (Year)"`) and ~806 users (`users`: each with the list of movie IDs they liked).
