@@ -6,6 +6,17 @@ const props = defineProps<{
   rank: number;
 }>();
 
+const backdropUrl = computed(() => props.rec.movie.tmdb?.backdropUrl ?? null);
+const logoUrl = computed(() => props.rec.movie.tmdb?.logoUrl ?? null);
+
+/** Fade the backdrop in once loaded; handle already-cached images on mount. */
+const bgEl = ref<HTMLImageElement | null>(null);
+const bgLoaded = ref(false);
+const bgFailed = ref(false);
+onMounted(() => {
+  if (bgEl.value?.complete && bgEl.value.naturalWidth > 0) bgLoaded.value = true;
+});
+
 /** "Because you liked A, B & C" from the top contributing movies. */
 const reason = computed(() => {
   const titles = props.rec.because.map((b) => b.title);
@@ -18,8 +29,21 @@ const reason = computed(() => {
 
 <template>
   <article class="rec">
-    <div class="rec__poster">
-      <MoviePoster :movie="rec.movie" />
+    <div class="rec__media" :class="{ 'is-loaded': bgLoaded }">
+      <img
+        v-if="backdropUrl && !bgFailed"
+        ref="bgEl"
+        class="rec__backdrop"
+        :src="backdropUrl"
+        :alt="`${rec.movie.title} backdrop`"
+        loading="lazy"
+        decoding="async"
+        width="1280"
+        height="720"
+        @load="bgLoaded = true"
+        @error="bgFailed = true"
+      >
+
       <span class="rec__rank">#{{ rank }}</span>
       <span
         class="rec__match"
@@ -28,13 +52,22 @@ const reason = computed(() => {
       >
         <span class="rec__match-num">{{ rec.matchPercent }}<small>%</small></span>
       </span>
+
+      <!-- Logo over the backdrop, with the title as a text fallback. -->
+      <div class="rec__label">
+        <img
+          v-if="logoUrl"
+          class="rec__logo"
+          :src="logoUrl"
+          :alt="rec.movie.title"
+          loading="lazy"
+          decoding="async"
+        >
+        <span v-else class="rec__title-fallback">{{ rec.movie.title }}</span>
+      </div>
     </div>
 
     <div class="rec__body">
-      <h3 class="rec__title">
-        {{ rec.movie.title }}
-        <span v-if="rec.movie.year" class="rec__year">{{ rec.movie.year }}</span>
-      </h3>
       <p class="rec__reason">{{ reason }}</p>
       <ul v-if="rec.movie.tmdb?.genres?.length" class="rec__genres">
         <li v-for="g in rec.movie.tmdb.genres.slice(0, 3)" :key="g">{{ g }}</li>
@@ -63,8 +96,23 @@ const reason = computed(() => {
   }
 }
 
-.rec__poster {
+.rec__media {
   position: relative;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(150deg, var(--surface-raised), var(--bg-800));
+  overflow: hidden;
+}
+
+.rec__backdrop {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+
+  .rec__media.is-loaded & {
+    opacity: 1;
+  }
 }
 
 .rec__rank {
@@ -84,16 +132,16 @@ const reason = computed(() => {
 /* Conic-gradient match ring driven by the --pct custom property. */
 .rec__match {
   position: absolute;
-  inset-block-end: -18px;
-  inset-inline-end: var(--space-3);
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
   display: grid;
   place-content: center;
-  inline-size: 48px;
-  block-size: 48px;
+  inline-size: 44px;
+  block-size: 44px;
   border-radius: 50%;
   background: conic-gradient(
     var(--accent) calc(var(--pct) * 1%),
-    color-mix(in oklch, var(--text) 16%, transparent) 0
+    color-mix(in oklch, var(--bg-900) 55%, transparent) 0
   );
   box-shadow: var(--shadow-card);
 
@@ -102,7 +150,8 @@ const reason = computed(() => {
     position: absolute;
     inset: 4px;
     border-radius: 50%;
-    background: var(--surface);
+    background: color-mix(in oklch, var(--bg-900) 85%, transparent);
+    backdrop-filter: blur(4px);
   }
 }
 
@@ -110,7 +159,7 @@ const reason = computed(() => {
   position: relative;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--accent);
 
   & small {
@@ -119,21 +168,45 @@ const reason = computed(() => {
   }
 }
 
+/* Bottom label area with scrim for logo/title legibility. */
+.rec__label {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: flex;
+  align-items: flex-end;
+  min-block-size: 50%;
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  background: linear-gradient(
+    to top,
+    var(--bg-900) 4%,
+    color-mix(in oklch, var(--bg-900) 55%, transparent) 45%,
+    transparent
+  );
+}
+
+.rec__logo {
+  max-inline-size: 65%;
+  max-block-size: 56px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+}
+
+.rec__title-fallback {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
 .rec__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-5) var(--space-4) var(--space-4);
-}
-
-.rec__title {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.rec__year {
-  color: var(--text-faint);
-  font-weight: 400;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
 }
 
 .rec__reason {
@@ -146,9 +219,8 @@ const reason = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  margin-block-start: auto;
-  padding-block-start: var(--space-2);
   list-style: none;
+  padding-inline-start: 0;
 
   & li {
     padding: 3px 10px;

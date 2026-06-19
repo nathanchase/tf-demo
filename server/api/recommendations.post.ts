@@ -1,12 +1,12 @@
-import { defineHandler } from "nitro";
-import { createError, readBody } from "nitro/h3";
+import { defineHandler, HTTPError } from "nitro";
+import { readBody } from "nitro/h3";
 import type {
   EnrichedMovie,
   MovieId,
   Recommendation,
   RecommendationsRequest,
   RecommendationsResponse,
-} from "~~/shared/types";
+} from "#shared/types";
 import { recommend } from "../utils/recommender";
 import { getEnrichedCatalog } from "../utils/tmdb";
 
@@ -25,9 +25,9 @@ export default defineHandler(async (event): Promise<RecommendationsResponse> => 
   const body = await readBody<RecommendationsRequest>(event);
 
   if (!body || !Array.isArray(body.likedIds)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Request body must include a `likedIds` array of movie IDs.",
+    throw new HTTPError({
+      status: 400,
+      message: "Request body must include a `likedIds` array of movie IDs.",
     });
   }
 
@@ -37,8 +37,8 @@ export default defineHandler(async (event): Promise<RecommendationsResponse> => 
 
   const { recommendations: scored, isFallback } = recommend(likedIds, limit);
 
-  // Join recommendations with enriched movie data (cached catalog lookup).
-  const catalog = await getEnrichedCatalog();
+  // Join recommendations with enriched movie data (static pre-baked catalog).
+  const catalog = getEnrichedCatalog();
   const byId = new Map<MovieId, EnrichedMovie>(catalog.map((m) => [m.id, m]));
 
   const recommendations: Recommendation[] = scored

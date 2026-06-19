@@ -1,4 +1,4 @@
-import type { MovieId, ReasonMovie, ScoredRecommendation } from "~~/shared/types";
+import type { MovieId, ReasonMovie, ScoredRecommendation } from "#shared/types";
 import { catalogById, movieIds, users } from "./dataset";
 
 /**

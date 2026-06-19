@@ -56,7 +56,7 @@ The build follows constraints the reviewer cares about — honor them:
 ### Nitro v3 gotchas (this nightly)
 
 - **No server auto-imports.** Nitro v3 removed them. Server code must import explicitly: `defineHandler` (not `defineEventHandler`) and `HTTPError` from `nitro`; `readBody`, `createError`, `getQuery` from `nitro/h3`. `nitro` is a direct dependency so these bare specifiers resolve at runtime.
-- **Don't use the global `$fetch` for external APIs.** Nitro's `$fetch` intercepts/normalizes absolute URLs and breaks upstream calls — use the native `fetch` (see `tmdbGet` in `tmdb.ts`).
+- **Use `node:https` for outbound API calls** (see `tmdbGet` in `tmdb.ts`). During dev SSR, both the global `$fetch`/`fetch` and Nitro's `fetch` (`import { fetch } from "nitro"`) route absolute URLs through the local app — the host is dropped and the request matches against Vue Router (→ 404s for every movie), for both URL-object and string inputs. `node:https` opens its own connection and can't be intercepted.
 - The TMDb key is read via `process.env.TMDB_API_KEY` (mirrored by `runtimeConfig.tmdbApiKey`).
 
 ## Layout

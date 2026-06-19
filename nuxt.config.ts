@@ -6,10 +6,22 @@ export default defineNuxtConfig({
   // Global, framework-free stylesheet (tokens + base + cascade layers).
   css: ["~/assets/css/main.css"],
 
-  // Server-only secrets. `tmdbApiKey` is read by the Nitro TMDb client and is
-  // never exposed to the client bundle. Override in prod with NUXT_TMDB_API_KEY.
-  runtimeConfig: {
-    tmdbApiKey: import.meta.env.TMDB_API_KEY ?? "",
+  // Deploy target: Cloudflare Workers (module syntax) via wrangler.
+  // nodeCompat enables the `nodejs_compat` runtime the Nitro server bundle needs.
+  // TMDb assets are pre-baked at build time, so no runtime secrets are required.
+  nitro: {
+    preset: "cloudflare_module",
+    cloudflare: {
+      nodeCompat: true,
+    },
+    // Nuxt's SSR runtime has a stray `import.meta.url.replace(...)` statement
+    // (its result is discarded). On Cloudflare workerd `import.meta.url` is
+    // undefined inside that chunk, so the call throws during SSR. Neutralise the
+    // exact expression at build time. Targeted so the entry module's own valid
+    // `import.meta.url` use is untouched.
+    replace: {
+      'import.meta.url.replace(/\\/app\\/.*$/, "/")': '"/"',
+    },
   },
 
   app: {

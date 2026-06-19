@@ -1,4 +1,4 @@
-import type { CatalogMovie, MovieId, MoviesDataset, RawUser } from "~~/shared/types";
+import type { CatalogMovie, MovieId, MoviesDataset, RawUser } from "#shared/types";
 import rawData from "../../app/assets/movies.json";
 
 /**

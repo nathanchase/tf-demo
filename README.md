@@ -60,4 +60,5 @@ The app degrades gracefully without a TMDb key — recommendations still work; o
 
 ## The data
 
-`app/assets/movies.json` holds the catalog (`movies`: id → `"Title (Year)"`) and ~806 users (`users`: each with the list of movie IDs they liked). Feedback is binary and implicit. See `CLAUDE.md` for the exact shape and parsing gotchas.
+`app/assets/movies.json` holds the catalog (`movies`: id → `"Title (Year)"`) and ~806 users (`users`: each with the list of movie IDs they liked). 
+Feedback is binary and implicit.

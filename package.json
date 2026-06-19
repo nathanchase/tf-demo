@@ -7,12 +7,21 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "generate:catalog": "node scripts/generate-catalog.mjs",
+    "deploy": "nuxt build && wrangler deploy",
+    "cf:preview": "nuxt build && wrangler dev"
   },
   "dependencies": {
     "nitro": "3.0.260522-beta",
     "nuxt": "npm:nuxt-nightly@5x",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "1.16.0",
+    "@types/node": "^25.9.3",
+    "eslint": "10.5.0",
+    "wrangler": "^4.59.1"
   }
 }

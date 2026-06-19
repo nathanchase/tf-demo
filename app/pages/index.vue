@@ -72,8 +72,9 @@ function scrollTo(id: string) {
       </div>
     </Transition>
 
-    <!-- ------------------------------------------------------ Recommendations -->
-    <section id="recommendations" class="section container">
+    <div class="workspace container">
+      <!-- ---------------------------------------------------- Recommendations -->
+      <section id="recommendations" class="section workspace__recs">
       <div class="section__head">
         <h2 class="section__title">Recommended for you</h2>
         <p v-if="isFallback" class="section__note">
@@ -87,7 +88,7 @@ function scrollTo(id: string) {
       <!-- Empty: nothing selected yet -->
       <div v-if="count === 0 && !recPending" class="placeholder">
         <span class="placeholder__icon" aria-hidden="true">🍿</span>
-        <p>Like some movies below and your personalised recommendations appear here.</p>
+        <p>Like some movies and your personalised recommendations appear here.</p>
       </div>
 
       <!-- Loading skeletons -->
@@ -109,29 +110,30 @@ function scrollTo(id: string) {
       </TransitionGroup>
     </section>
 
-    <!-- --------------------------------------------------------- The catalog -->
-    <section id="catalog" class="section container">
-      <div class="section__head">
-        <h2 class="section__title">The collection</h2>
-        <p class="section__note">Tap a poster to add it to your likes.</p>
-      </div>
+      <!-- ------------------------------------------------------- The catalog -->
+      <section id="catalog" class="section workspace__catalog">
+        <div class="section__head">
+          <h2 class="section__title">The collection</h2>
+          <p class="section__note">Tap a poster to add it to your likes.</p>
+        </div>
 
-      <p v-if="pending" class="placeholder">Loading the collection…</p>
-      <p v-else-if="error" class="placeholder placeholder--error">
-        Couldn't load the catalog. Please refresh.
-      </p>
+        <p v-if="pending" class="placeholder">Loading the collection…</p>
+        <p v-else-if="error" class="placeholder placeholder--error">
+          Couldn't load the catalog. Please refresh.
+        </p>
 
-      <div v-else class="catalog-grid">
-        <MovieCard
-          v-for="(movie, i) in movies"
-          :key="movie.id"
-          :movie="movie"
-          :selected="isSelected(movie.id)"
-          :eager="i < 12"
-          @toggle="toggle(movie.id)"
-        />
-      </div>
-    </section>
+        <div v-else class="catalog-grid">
+          <MovieCard
+            v-for="(movie, i) in movies"
+            :key="movie.id"
+            :movie="movie"
+            :selected="isSelected(movie.id)"
+            :eager="i < 12"
+            @toggle="toggle(movie.id)"
+          />
+        </div>
+      </section>
+    </div>
 
     <footer class="footer container">
       <p>
@@ -291,9 +293,45 @@ function scrollTo(id: string) {
   }
 }
 
+/* ------------------------------------------------------------ Workspace --- */
+.workspace {
+  display: grid;
+  gap: clamp(var(--space-5), 4vw, var(--space-7));
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  /* Mobile: stacked, recommendations above the collection (as before). */
+  grid-template-areas: "recs" "catalog";
+}
+
+.workspace__recs {
+  grid-area: recs;
+}
+
+.workspace__catalog {
+  grid-area: catalog;
+}
+
+@media (min-width: 1024px) {
+  .workspace {
+    /* Desktop: collection on the left, recommendations on the right. */
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 420px);
+    grid-template-areas: "catalog recs";
+    align-items: start;
+  }
+
+  /* Keep recommendations in view while scrolling the long collection. */
+  .workspace__recs {
+    position: sticky;
+    inset-block-start: var(--space-8);
+  }
+}
+
 /* ------------------------------------------------------------- Sections --- */
 .section {
   padding-block: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.workspace .section {
+  padding-block: 0;
 }
 
 .section__head {
