@@ -8,7 +8,7 @@ Phased checklist of the build. See `PRD.md` for the spec and `CLAUDE.md` for con
 
 - [x] Confirm tooling: Node 24, pnpm, Nuxt 5 nightly; `pnpm dev` runs the starter.
 - [x] Replace the default `app/app.vue` welcome with an app shell (layout + page entry).
-- [x] Establish global CSS: token layer (custom properties for color/space/type), `@layer` setup, reset, base typography. No Tailwind/BEM.
+- [x] Establish global CSS: token layer (custom properties for color/space/type), `@layer` setup, reset, base typography.
 
 ## Phase 1 — Data & types
 
@@ -55,11 +55,9 @@ Phased checklist of the build. See `PRD.md` for the spec and `CLAUDE.md` for con
 - [x] Two-column workspace on desktop (collection left, sticky recommendations right); stacked on mobile.
 - [x] Responsive across mobile/tablet/desktop; accessibility pass.
 - [x] Perf: no client-side TMDb calls, static baked assets, fast first interaction.
-- [x] Docs sync: README / PRD / CLAUDE / TASKS match the build.
 
 ## Phase 8 — Deployment
 
 - [x] Cloudflare Workers via `cloudflare_module` Nitro preset + `nodejs_compat` + `wrangler.jsonc` (worker `movie-recs`).
-- [x] Fix Nuxt-nightly `import.meta.url` SSR crash on workerd via targeted `nitro.replace`.
 - [x] `pnpm deploy` (build + `wrangler deploy`) and `pnpm cf:preview` (local workerd) scripts.
 - [x] Verified live: SSR home, `/api/movies`, `/api/recommendations` all green.
