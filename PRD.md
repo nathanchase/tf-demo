@@ -1,5 +1,7 @@
 # Product Requirements — Movie Recommender
 
+> **Status: complete & deployed** — https://movie-recs.nathanchase.workers.dev (Cloudflare Workers).
+
 ## 1. Goal
 
 Build a visually impressive, single-purpose web app that recommends movies from a fixed 70-title catalog based on what a user likes, leveraging the preferences of ~806 other users. **Clean architecture + an explainable algorithm + a standout UI**, scoped to a few hours of work — not a production ML system.
@@ -47,12 +49,13 @@ Acceptance: recommendations are deterministic for a given input, never include a
 ## 5. Architecture
 
 - **Nitro BFF (`/server`)**: the only thing the browser calls.
-  - `GET /api/movies` — the catalog enriched with TMDb assets (cached).
+  - `GET /api/movies` — the catalog enriched with TMDb assets (served from baked static data).
   - `POST /api/recommendations` — body: liked IDs; returns ranked recommendations with explanations and enriched assets.
   - `server/utils/recommender.ts` — pure CF engine (no HTTP), unit-testable.
-  - `server/utils/tmdb.ts` — TMDb client with caching and graceful failure.
-- **TMDb enrichment**: poster, backdrop, logo, overview, genres, rating. Resolved by a curated `catalogId → tmdbId` map (`server/utils/tmdb-ids.ts`) and fetched by exact ID (`/movie/{id}?append_to_response=images`, one call each) — deterministic, no wrong-title search hits; search is a fallback only. Memoized in-memory (TTL promise cache) so the 70 lookups happen once.
+  - `server/utils/tmdb.ts` — returns the pre-baked enriched catalog (no runtime network).
+- **TMDb enrichment is pre-baked at build time.** The catalog is fixed (70 films), so `scripts/generate-catalog.mjs` resolves every poster/backdrop/logo/overview/genre/rating once and writes `server/utils/enriched-catalog.json` (committed). Resolution is by a curated `catalogId → tmdbId` map (`server/utils/tmdb-ids.json`), fetched by exact ID (`/movie/{id}?append_to_response=images`) — deterministic, no wrong-title hits; title+year search is a generator-side fallback only. Result: the running server makes **no** TMDb calls, needs **no** runtime key, and isn't subject to Cloudflare sub-request limits.
 - **Shared types** in `shared/types/`: dataset shape, API request/response DTOs, TMDb DTOs, recommendation result. Imported by both `app/` and `server/`.
+- **Deployment**: Cloudflare Workers via the `cloudflare_module` Nitro preset + `wrangler.jsonc`. The TMDb key is needed only at catalog-generation time (`TMDB_API_KEY` for `pnpm generate:catalog`), never at runtime.
 
 ## 6. UI / UX requirements
 
@@ -76,4 +79,4 @@ The differentiator. Hand-built, modern, framework-free CSS.
 - Recommendations are sensible and explainable.
 - Code is well-structured (BFF boundary respected, types shared, engine isolated).
 - The UI looks genuinely polished and is responsive + accessible.
-- A reviewer can clone, add a key, `pnpm dev`, and understand the project from the docs.
+- A reviewer can clone, `pnpm dev` (no key needed — artwork is baked in), and understand the project from the docs.

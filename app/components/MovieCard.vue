@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import type { EnrichedMovie } from "~~/shared/types";
-
-defineProps<{
-  movie: EnrichedMovie;
-  selected: boolean;
-  eager?: boolean;
-}>();
-
-defineEmits<{ toggle: [] }>();
-</script>
-
 <template>
   <button
     type="button"
@@ -19,10 +7,20 @@ defineEmits<{ toggle: [] }>();
     :aria-label="`${selected ? 'Remove' : 'Add'} ${movie.title} ${selected ? 'from' : 'to'} your likes`"
     @click="$emit('toggle')"
   >
-    <MoviePoster :movie="movie" :eager="eager" />
+    <MoviePoster
+      :movie="movie"
+      :eager="eager"
+    />
 
-    <span class="card__check" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="18" height="18">
+    <span
+      class="card__check"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+      >
         <path
           d="M5 13l4 4L19 7"
           fill="none"
@@ -36,9 +34,14 @@ defineEmits<{ toggle: [] }>();
 
     <span class="card__overlay">
       <span class="card__title">{{ movie.title }}</span>
+
       <span class="card__meta">
         <span v-if="movie.year">{{ movie.year }}</span>
-        <span v-if="movie.tmdb?.rating" class="card__rating">
+
+        <span
+          v-if="movie.tmdb?.rating"
+          class="card__rating"
+        >
           ★ {{ movie.tmdb.rating.toFixed(1) }}
         </span>
       </span>
@@ -46,31 +49,43 @@ defineEmits<{ toggle: [] }>();
   </button>
 </template>
 
+<script setup lang="ts">
+import type { EnrichedMovie } from '~~/shared/types';
+
+defineProps<{
+  movie: EnrichedMovie
+  selected: boolean
+  eager?: boolean
+}>();
+
+defineEmits<{ toggle: [] }>();
+</script>
+
 <style scoped>
 .card {
   position: relative;
   display: block;
   width: 100%;
   padding: 0;
-  border-radius: var(--radius);
   overflow: hidden;
-  background: var(--surface);
-  box-shadow: var(--shadow-card);
   outline: 1px solid var(--border);
   outline-offset: -1px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
   transition:
     transform 0.3s var(--ease),
     outline-color 0.3s var(--ease),
     box-shadow 0.3s var(--ease);
 
   &:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-pop);
     outline-color: var(--border-strong);
+    box-shadow: var(--shadow-pop);
+    transform: translateY(-6px);
 
     & .card__overlay {
-      transform: translateY(0);
       opacity: 1;
+      transform: translateY(0);
     }
   }
 
@@ -79,8 +94,8 @@ defineEmits<{ toggle: [] }>();
     outline-offset: -2px;
 
     & .card__check {
-      transform: scale(1);
       opacity: 1;
+      transform: scale(1);
     }
 
     & :deep(.poster img) {
@@ -110,36 +125,37 @@ defineEmits<{ toggle: [] }>();
 
 .card__overlay {
   position: absolute;
-  inset-inline: 0;
   inset-block-end: 0;
+  inset-inline: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
   padding: var(--space-5) var(--space-3) var(--space-3);
   text-align: start;
-  background: linear-gradient(
-    to top,
-    var(--bg-900) 8%,
-    color-mix(in oklch, var(--bg-900) 70%, transparent) 50%,
-    transparent
-  );
-  transform: translateY(12%);
+  background:
+    linear-gradient(
+      to top,
+      var(--bg-900) 8%,
+      color-mix(in oklch, var(--bg-900) 70%, transparent) 50%,
+      transparent
+    );
   opacity: 0;
+  transform: translateY(12%);
   transition:
     transform 0.3s var(--ease),
     opacity 0.3s var(--ease);
 
   /* Always show the label on touch / coarse pointers where there's no hover. */
   @media (hover: none) {
-    transform: none;
     opacity: 1;
+    transform: none;
   }
 }
 
 .card__title {
   font-family: var(--font-display);
-  font-weight: 600;
   font-size: 0.92rem;
+  font-weight: 600;
   line-height: 1.2;
 }
 

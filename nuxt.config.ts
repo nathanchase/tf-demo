@@ -39,6 +39,7 @@ export default defineNuxtConfig({
         { name: "color-scheme", content: "dark" },
       ],
       link: [
+        { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
         { rel: "preconnect", href: "https://image.tmdb.org" },
         {
           rel: "preconnect",

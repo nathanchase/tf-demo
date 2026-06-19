@@ -1,55 +1,47 @@
-<script setup lang="ts">
-import type { MoviesResponse } from "~~/shared/types";
-
-const { selected, isSelected, toggle, clear, count } = useSelection();
-const { data: recData, pending: recPending, error: recError } = useRecommendations(12);
-
-// SSR-fetched catalog (enriched on the server, cached).
-const { data, pending, error } = await useFetch<MoviesResponse>("/api/movies");
-const movies = computed(() => data.value?.movies ?? []);
-
-// A handful of posters for the hero marquee.
-const heroPosters = computed(() => movies.value.filter((m) => m.tmdb?.posterUrl).slice(0, 16));
-
-const recommendations = computed(() => recData.value?.recommendations ?? []);
-const isFallback = computed(() => recData.value?.fallback ?? false);
-
-function scrollTo(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-</script>
-
 <template>
   <div>
     <!-- ---------------------------------------------------------------- Hero -->
     <header class="hero">
-      <div v-if="heroPosters.length" class="hero__marquee" aria-hidden="true">
+      <div
+        v-if="heroPosters.length"
+        class="hero__marquee"
+        aria-hidden="true"
+      >
         <div class="hero__row">
           <img
             v-for="m in heroPosters"
             :key="`a-${m.id}`"
             :src="m.tmdb!.posterUrl!"
-            :alt="''"
+            alt=""
             loading="eager"
             decoding="async"
-          />
+          >
+
           <img
             v-for="m in heroPosters"
             :key="`b-${m.id}`"
             :src="m.tmdb!.posterUrl!"
-            :alt="''"
+            alt=""
             loading="lazy"
             decoding="async"
-          />
+          >
         </div>
       </div>
 
       <div class="hero__content container">
-        <h1 class="hero__title">Tell us what you love.<br />We'll find your next favorite.</h1>
+        <h1 class="hero__title">
+          Tell us what you love.<br>We'll find your next favorite.
+        </h1>
+
         <p class="hero__lede">
           Pick the movies you enjoy and we'll surface what fans with the same taste watched next.
         </p>
-        <button class="btn btn--primary" type="button" @click="scrollTo('catalog')">
+
+        <button
+          class="btn btn--primary"
+          type="button"
+          @click="scrollTo('catalog')"
+        >
           Start picking
         </button>
       </div>
@@ -57,14 +49,29 @@ function scrollTo(id: string) {
 
     <!-- ----------------------------------------------------- Sticky selection -->
     <Transition name="slide-down">
-      <div v-if="count > 0" class="actionbar">
+      <div
+        v-if="count > 0"
+        class="actionbar"
+      >
         <div class="actionbar__inner container">
           <p class="actionbar__count">
             <strong>{{ count }}</strong> {{ count === 1 ? "movie" : "movies" }} liked
           </p>
+
           <div class="actionbar__buttons">
-            <button class="btn btn--ghost" type="button" @click="clear">Clear</button>
-            <button class="btn btn--primary" type="button" @click="scrollTo('recommendations')">
+            <button
+              class="btn btn--ghost"
+              type="button"
+              @click="clear"
+            >
+              Clear
+            </button>
+
+            <button
+              class="btn btn--primary"
+              type="button"
+              @click="scrollTo('recommendations')"
+            >
               See recommendations
             </button>
           </div>
@@ -74,55 +81,110 @@ function scrollTo(id: string) {
 
     <div class="workspace container">
       <!-- ---------------------------------------------------- Recommendations -->
-      <section id="recommendations" class="section workspace__recs">
-      <div class="section__head">
-        <h2 class="section__title">Recommended for you</h2>
-        <p v-if="isFallback" class="section__note">
-          Popular picks to get you started — like a few and these will tailor to your taste.
-        </p>
-        <p v-else-if="recommendations.length" class="section__note">
-          Ranked by how often fans of your picks also loved these.
-        </p>
-      </div>
-
-      <!-- Empty: nothing selected yet -->
-      <div v-if="count === 0 && !recPending" class="placeholder">
-        <span class="placeholder__icon" aria-hidden="true">🍿</span>
-        <p>Like some movies and your personalised recommendations appear here.</p>
-      </div>
-
-      <!-- Loading skeletons -->
-      <div v-else-if="recPending" class="rec-grid">
-        <div v-for="n in 6" :key="n" class="skeleton" />
-      </div>
-
-      <p v-else-if="recError" class="placeholder placeholder--error">
-        Couldn't load recommendations. Try changing your selection.
-      </p>
-
-      <TransitionGroup v-else tag="div" name="pop" class="rec-grid">
-        <RecommendationCard
-          v-for="(rec, i) in recommendations"
-          :key="rec.id"
-          :rec="rec"
-          :rank="i + 1"
-        />
-      </TransitionGroup>
-    </section>
-
-      <!-- ------------------------------------------------------- The catalog -->
-      <section id="catalog" class="section workspace__catalog">
+      <section
+        id="recommendations"
+        class="section workspace__recs"
+      >
         <div class="section__head">
-          <h2 class="section__title">The collection</h2>
-          <p class="section__note">Tap a poster to add it to your likes.</p>
+          <h2 class="section__title">
+            Recommended for you
+          </h2>
+
+          <p
+            v-if="isFallback"
+            class="section__note"
+          >
+            Popular picks to get you started — like a few and these will tailor to your taste.
+          </p>
+
+          <p
+            v-else-if="recommendations.length"
+            class="section__note"
+          >
+            Ranked by how often fans of your picks also loved these.
+          </p>
         </div>
 
-        <p v-if="pending" class="placeholder">Loading the collection…</p>
-        <p v-else-if="error" class="placeholder placeholder--error">
+        <!-- Empty: nothing selected yet -->
+        <div
+          v-if="count === 0 && !recPending"
+          class="placeholder"
+        >
+          <span
+            class="placeholder__icon"
+            aria-hidden="true"
+          >🍿</span>
+
+          <p>Like some movies and your personalized recommendations appear here.</p>
+        </div>
+
+        <!-- Loading skeletons -->
+        <div
+          v-else-if="recPending"
+          class="rec-grid"
+        >
+          <div
+            v-for="n in 6"
+            :key="n"
+            class="skeleton"
+          />
+        </div>
+
+        <p
+          v-else-if="recError"
+          class="placeholder placeholder--error"
+        >
+          Couldn't load recommendations. Try changing your selection.
+        </p>
+
+        <TransitionGroup
+          v-else
+          tag="div"
+          name="pop"
+          class="rec-grid"
+        >
+          <RecommendationCard
+            v-for="(rec, i) in recommendations"
+            :key="rec.id"
+            :rec="rec"
+            :rank="i + 1"
+          />
+        </TransitionGroup>
+      </section>
+
+      <!-- ------------------------------------------------------- The catalog -->
+      <section
+        id="catalog"
+        class="section workspace__catalog"
+      >
+        <div class="section__head">
+          <h2 class="section__title">
+            The collection
+          </h2>
+
+          <p class="section__note">
+            Tap a poster to add it to your likes.
+          </p>
+        </div>
+
+        <p
+          v-if="pending"
+          class="placeholder"
+        >
+          Loading the collection…
+        </p>
+
+        <p
+          v-else-if="error"
+          class="placeholder placeholder--error"
+        >
           Couldn't load the catalog. Please refresh.
         </p>
 
-        <div v-else class="catalog-grid">
+        <div
+          v-else
+          class="catalog-grid"
+        >
           <MovieCard
             v-for="(movie, i) in movies"
             :key="movie.id"
@@ -139,18 +201,43 @@ function scrollTo(id: string) {
       <p>
         Built with Nuxt 5 · Nitro BFF · item-based collaborative filtering. Artwork &amp; metadata
         from
-        <a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDb</a>.
+        <a
+          href="https://www.themoviedb.org"
+          target="_blank"
+          rel="noopener"
+        >TMDb</a>.
       </p>
     </footer>
   </div>
 </template>
 
+<script setup lang="ts">
+import type { MoviesResponse } from '~~/shared/types';
+
+const { selected, isSelected, toggle, clear, count } = useSelection();
+const { data: recData, pending: recPending, error: recError } = useRecommendations(12);
+
+// SSR-fetched catalog (enriched on the server, cached).
+const { data, pending, error } = await useFetch<MoviesResponse>('/api/movies');
+const movies = computed(() => data.value?.movies ?? []);
+
+// A handful of posters for the hero marquee.
+const heroPosters = computed(() => movies.value.filter(m => m.tmdb?.posterUrl).slice(0, 16));
+
+const recommendations = computed(() => recData.value?.recommendations ?? []);
+const isFallback = computed(() => recData.value?.fallback ?? false);
+
+function scrollTo(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
 <style scoped>
 /* ----------------------------------------------------------------- Hero --- */
 .hero {
   position: relative;
-  overflow: hidden;
   padding-block: clamp(4rem, 12vw, 9rem);
+  overflow: hidden;
   isolation: isolate;
 }
 
@@ -160,8 +247,8 @@ function scrollTo(id: string) {
   z-index: -2;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: var(--space-4);
+  justify-content: center;
   opacity: 0.16;
   mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
 }
@@ -186,29 +273,30 @@ function scrollTo(id: string) {
   }
 }
 
-.hero::after {
-  /* Vignette so text stays legible over the marquee. */
-  content: "";
+.hero:after {
   position: absolute;
   inset: 0;
   z-index: -1;
+
+  /* Vignette so text stays legible over the marquee. */
+  content: "";
   background: radial-gradient(80% 90% at 50% 40%, transparent, var(--bg-900) 75%);
 }
 
 .hero__content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: var(--space-4);
+  align-items: flex-start;
   max-width: 46rem;
 }
 
 .hero__eyebrow {
   font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .hero__title {
@@ -217,9 +305,9 @@ function scrollTo(id: string) {
 }
 
 .hero__lede {
+  max-width: 38rem;
   font-size: clamp(1rem, 2.2vw, 1.2rem);
   color: var(--text-muted);
-  max-width: 38rem;
 }
 
 /* ----------------------------------------------------------- Action bar --- */
@@ -228,15 +316,15 @@ function scrollTo(id: string) {
   inset-block-start: 0;
   z-index: 20;
   background: color-mix(in oklch, var(--bg-800) 82%, transparent);
-  backdrop-filter: blur(14px) saturate(1.2);
   border-block-end: 1px solid var(--border);
+  backdrop-filter: blur(14px) saturate(1.2);
 }
 
 .actionbar__inner {
   display: flex;
+  gap: var(--space-4);
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
   padding-block: var(--space-3);
 }
 
@@ -244,9 +332,9 @@ function scrollTo(id: string) {
   color: var(--text-muted);
 
   & strong {
-    color: var(--text);
     font-family: var(--font-display);
     font-size: 1.1rem;
+    color: var(--text);
   }
 }
 
@@ -262,8 +350,8 @@ function scrollTo(id: string) {
 /* -------------------------------------------------------------- Buttons --- */
 .btn {
   padding: 0.7em 1.3em;
-  font-weight: 600;
   font-size: 1.2rem;
+  font-weight: 600;
   border-radius: 999px;
   transition:
     transform 0.2s var(--ease),
@@ -296,10 +384,11 @@ function scrollTo(id: string) {
 /* ------------------------------------------------------------ Workspace --- */
 .workspace {
   display: grid;
-  gap: clamp(var(--space-5), 4vw, var(--space-7));
-  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+
   /* Mobile: stacked, recommendations above the collection (as before). */
   grid-template-areas: "recs" "catalog";
+  gap: clamp(var(--space-5), 4vw, var(--space-7));
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
 }
 
 .workspace__recs {
@@ -310,11 +399,12 @@ function scrollTo(id: string) {
   grid-area: catalog;
 }
 
-@media (min-width: 1024px) {
+@media (width >= 1024px) {
   .workspace {
+    grid-template-areas: "catalog recs";
+
     /* Desktop: collection on the left, recommendations on the right. */
     grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 420px);
-    grid-template-areas: "catalog recs";
     align-items: start;
   }
 
@@ -362,11 +452,11 @@ function scrollTo(id: string) {
 /* ---------------------------------------------------- Placeholders/skel --- */
 .placeholder {
   display: grid;
-  place-items: center;
   gap: var(--space-3);
+  place-items: center;
   padding: var(--space-7) var(--space-4);
-  text-align: center;
   color: var(--text-muted);
+  text-align: center;
   background: var(--surface);
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-lg);
@@ -383,14 +473,15 @@ function scrollTo(id: string) {
 
 .skeleton {
   aspect-ratio: 2 / 3;
-  border-radius: var(--radius);
-  background: linear-gradient(
-    100deg,
-    var(--surface) 30%,
-    var(--surface-raised) 50%,
-    var(--surface) 70%
-  );
+  background:
+    linear-gradient(
+      100deg,
+      var(--surface) 30%,
+      var(--surface-raised) 50%,
+      var(--surface) 70%
+    );
   background-size: 200% 100%;
+  border-radius: var(--radius);
   animation: shimmer 1.4s linear infinite;
 }
 
@@ -403,8 +494,8 @@ function scrollTo(id: string) {
 /* --------------------------------------------------------------- Footer --- */
 .footer {
   padding-block: var(--space-7);
-  color: var(--text-faint);
   font-size: 0.85rem;
+  color: var(--text-faint);
   border-block-start: 1px solid var(--border);
 }
 
@@ -415,10 +506,11 @@ function scrollTo(id: string) {
     transform 0.3s var(--ease),
     opacity 0.3s var(--ease);
 }
+
 .slide-down-enter-from,
 .slide-down-leave-to {
-  transform: translateY(-100%);
   opacity: 0;
+  transform: translateY(-100%);
 }
 
 .pop-enter-active {
@@ -426,10 +518,12 @@ function scrollTo(id: string) {
     opacity 0.4s var(--ease),
     transform 0.4s var(--ease);
 }
+
 .pop-enter-from {
   opacity: 0;
   transform: translateY(16px);
 }
+
 .pop-move {
   transition: transform 0.4s var(--ease);
 }
