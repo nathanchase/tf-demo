@@ -53,7 +53,6 @@ Acceptance: recommendations are deterministic for a given input, never include a
   - `server/utils/tmdb.ts` — TMDb client with caching and graceful failure.
 - **TMDb enrichment**: poster, backdrop, logo, overview, genres, rating. Resolved by a curated `catalogId → tmdbId` map (`server/utils/tmdb-ids.ts`) and fetched by exact ID (`/movie/{id}?append_to_response=images`, one call each) — deterministic, no wrong-title search hits; search is a fallback only. Memoized in-memory (TTL promise cache) so the 70 lookups happen once.
 - **Shared types** in `shared/types/`: dataset shape, API request/response DTOs, TMDb DTOs, recommendation result. Imported by both `app/` and `server/`.
-- **Config**: `TMDB_API_KEY` via `runtimeConfig`, server-only.
 
 ## 6. UI / UX requirements
 
