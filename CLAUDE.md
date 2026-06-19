@@ -22,8 +22,6 @@ pnpm generate         # static prerender
 
 There is no test or lint tooling configured yet. If you add tests, prefer **Vitest** (Nuxt's default) and wire a `test` script before relying on it.
 
-TMDb access needs an API key — set `TMDB_API_KEY` in `.env` (read via `runtimeConfig`, server-side only). Never expose it to the client.
-
 ## The dataset (read this before touching recommendations)
 
 `app/assets/movies.json` is the single source of truth. Its shape is **not** a flat array:
