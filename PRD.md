@@ -4,7 +4,7 @@
 
 ## 1. Goal
 
-Build a visually impressive, single-purpose web app that recommends movies from a fixed 70-title catalog based on what a user likes, leveraging the preferences of ~806 other users. **Clean architecture + an explainable algorithm + a standout UI**, scoped to a few hours of work — not a production ML system.
+Build a visually impressive, single-purpose web app that recommends movies from a fixed 70-title catalog based on what a user likes, leveraging the preferences of ~806 other users. **Clean architecture + an explainable algorithm + a standout UI**.
 
 ## 2. Users & primary flow
 
