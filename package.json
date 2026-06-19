@@ -1,0 +1,24 @@
+{
+  "name": "truefire-nathanchase-movie-recs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "fmt": "oxfmt",
+    "generate": "nuxt generate",
+    "lint": "oxlint",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nitro": "3.0.260522-beta",
+    "nuxt": "npm:nuxt-nightly@5x",
+    "vue": "^3.5.35",
+    "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.55.0",
+    "oxlint": "^1.70.0"
+  }
+}
