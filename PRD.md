@@ -30,7 +30,7 @@ Parsing requirements:
 
 ## 4. Recommendation approach
 
-**Item-based collaborative filtering** (item-to-item), the same family Amazon popularized — chosen because it is explainable, stable for a small catalog, and matches the "users who liked X also liked Y" framing in the brief.
+**Item-based collaborative filtering** (item-to-item), the same family Amazon popularized, stable for a small catalog, and matches the "users who liked X also liked Y" brief requirement.
 
 1. Build the binary user–item matrix from `users` (806 × 70).
 2. Compute a **70 × 70 item–item cosine similarity matrix** once (precompute/cache at server start; it's tiny).
