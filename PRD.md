@@ -38,12 +38,6 @@ Parsing requirements:
 4. Return the top-N candidates ranked by score, excluding already-liked movies.
 5. For each recommendation, surface the **strongest contributing liked movie(s)** as the explanation ("Because you liked …").
 
-Decisions to make explicit in code/comments:
-
-- Similarity metric (cosine over binary vectors) and why.
-- **Decision:** use a plain cosine-similarity sum for scoring (simplest, most explainable). Acknowledge the popularity-bias trade-off in comments; a popularity-normalized variant is a stretch toggle, not the default.
-- Cold start: with zero selections, fall back to most-liked / popular movies.
-
 Acceptance: recommendations are deterministic for a given input, never include already-liked movies, and degrade sensibly at the edges (0 likes, 1 like, all 70 liked).
 
 ## 5. Architecture
