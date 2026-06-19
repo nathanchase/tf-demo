@@ -1,6 +1,6 @@
 # 🎬 Movie Recommender
 
-A small but polished movie recommendation app: pick the movies you love, get back the ones you'll love next. Built as a technical exercise for **TrueFire Studios** to demonstrate end-to-end proficiency: data modeling, a recommendation engine, a backend-for-frontend, and a genuinely nice-looking, modern user interface.
+A small but polished movie recommendation app: pick the movies you love, get back the ones you'll love next. Built to demonstrate end-to-end proficiency: data modeling, a recommendation engine, a backend-for-frontend, and a genuinely nice-looking, modern user interface.
 
 **▶ Live demo: https://movie-recs.nathanchase.workers.dev** (deployed on Cloudflare Workers)
 
