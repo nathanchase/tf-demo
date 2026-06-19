@@ -14,7 +14,7 @@ A small but polished movie recommendation app: pick the movies you love, get bac
 
 ## Why it's built this way
 
-This project optimizes for what a senior frontend reviewer looks for: clear architecture, sensible data handling, an explainable algorithm, and a modern, hand-crafted UI.
+This project optimizes for clear architecture, sensible data handling, an explainable algorithm, and a modern, hand-crafted UI.
 
 - **Nuxt 5 + Vue 3** for the application layer.
 - **Nitro backend-for-frontend** (`/server`) — the browser only talks to our own API, never TMDb directly. See [nitro.build](https://nitro.build/docs).
